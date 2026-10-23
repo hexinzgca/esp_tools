@@ -1,0 +1,29 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# VASP/ORCA run artifacts
+LOCPOT
+OUTCAR
+OSZICAR
+CHG
+CHGCAR
+WAVECAR
+vasprun.xml
+vaspout.h5
+vasp.out
+*.gbw
+*.densities
+*.densitiesinfo
+*.scfp
+*.bas*
+*.tmp
+*.bibtex
+*.property.txt
+*.engrad
+
+# Generated ESP output
+esp_*.json
+*_esp.json
+*_grid.json

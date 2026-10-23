@@ -1,0 +1,28 @@
+SYSTEM = ESP grid (LVHAR)
+
+# Electronic structure
+PREC   = Accurate
+ENCUT  = 520
+EDIFF  = 1E-6
+NELM   = 200
+NELMIN = 4
+ISMEAR = 0
+SIGMA  = 0.05
+ISPIN  = 1
+ISYM   = 0
+LREAL  = .FALSE.
+
+# Static calculation (no ionic relaxation)
+IBRION = -1
+NSW    = 0
+ISIF   = 2
+
+# Outputs: LOCPOT is the only heavy file we need.
+LWAVE  = .FALSE.
+LCHARG = .FALSE.
+LVHAR  = .TRUE.
+LVTOT  = .FALSE.
+
+# Parallelization
+NCORE  = 4
+KPAR   = 1

@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/hexinzgca/esp_tools/schema/record-v1.schema.json",
+  "title": "esp_tools unified record v1",
+  "type": "object",
+  "required": [
+    "format",
+    "source",
+    "structure",
+    "method",
+    "energy",
+    "forces",
+    "stress",
+    "electrostatic_potential",
+    "units",
+    "provenance"
+  ],
+  "properties": {
+    "format": {"const": "esp_tools/record-v1"},
+    "source": {
+      "type": "object",
+      "required": ["code", "files"],
+      "properties": {
+        "code": {"enum": ["vasp", "orca"]},
+        "files": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["path", "sha256", "bytes"],
+            "properties": {
+              "path": {"type": "string"},
+              "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+              "bytes": {"type": "integer", "minimum": 0}
+            }
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "structure": {
+      "type": "object",
+      "required": [
+        "natoms",
+        "symbols",
+        "counts",
+        "positions_Angstrom",
+        "lattice_Angstrom",
+        "pbc",
+        "charge",
+        "multiplicity",
+        "spin"
+      ],
+      "properties": {
+        "natoms": {"type": "integer", "minimum": 1},
+        "symbols": {"type": "array", "items": {"type": "string"}},
+        "counts": {"type": "array", "items": {"type": "integer", "minimum": 1}},
+        "formula": {"type": ["string", "null"]},
+        "positions_Angstrom": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "prefixItems": [{"type": "number"}, {"type": "number"}, {"type": "number"}],
+            "items": false
+          }
+        },
+        "lattice_Angstrom": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "array",
+            "prefixItems": [{"type": "number"}, {"type": "number"}, {"type": "number"}],
+            "items": false
+          }
+        },
+        "pbc": {
+          "type": "array",
+          "prefixItems": [{"type": "boolean"}, {"type": "boolean"}, {"type": "boolean"}],
+          "items": false
+        },
+        "charge": {"type": ["number", "null"]},
+        "multiplicity": {"type": ["integer", "null"]},
+        "spin": {"type": "object"}
+      },
+      "additionalProperties": true
+    },
+    "method": {
+      "type": "object",
+      "required": ["code"],
+      "properties": {
+        "code": {"enum": ["vasp", "orca"]},
+        "functional": {"type": ["string", "null"]},
+        "basis": {"type": ["string", "null"]},
+        "aux_basis": {"type": ["string", "null"]},
+        "software": {"type": "object"},
+        "pseudopotentials": {"type": "array", "items": {"type": "object"}},
+        "approximations": {"type": "array", "items": {"type": "string"}},
+        "solvent": {"type": ["string", "null"]},
+        "settings": {"type": "object"},
+        "kpoints": {"type": ["string", "null"]},
+        "potcar_titles": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": true
+    },
+    "energy": {
+      "type": ["object", "null"],
+      "properties": {
+        "total_eV": {"type": "number"},
+        "total_hartree": {"type": "number"},
+        "per_atom_eV": {"type": "number"},
+        "unit": {"const": "eV"},
+        "source": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "forces": {
+      "type": ["object", "null"],
+      "properties": {
+        "values_eV_per_Angstrom": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "prefixItems": [{"type": "number"}, {"type": "number"}, {"type": "number"}],
+            "items": false
+          }
+        },
+        "max_norm_eV_per_Angstrom": {"type": "number"},
+        "unit": {"const": "eV/Angstrom"},
+        "source": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "stress": {
+      "type": "object",
+      "required": ["available"],
+      "properties": {
+        "available": {"type": "boolean"},
+        "reason": {"type": "string"},
+        "values_kBar": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "prefixItems": [{"type": "number"}, {"type": "number"}, {"type": "number"}],
+            "items": false
+          }
+        },
+        "values_eV_per_Angstrom3": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "prefixItems": [{"type": "number"}, {"type": "number"}, {"type": "number"}],
+            "items": false
+          }
+        },
+        "pressure_kBar": {"type": "number"},
+        "unit": {"type": "string"},
+        "sign_convention": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "electrostatic_potential": {
+      "type": "object",
+      "required": ["points", "point_columns", "units"],
+      "properties": {
+        "points": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "prefixItems": [
+              {"type": "number"},
+              {"type": "number"},
+              {"type": "number"},
+              {"type": "number"}
+            ],
+            "items": false
+          }
+        },
+        "point_columns": {
+          "type": "array",
+          "prefixItems": [
+            {"const": "x_Angstrom"},
+            {"const": "y_Angstrom"},
+            {"const": "z_Angstrom"},
+            {"const": "phi_eV_per_e"}
+          ],
+          "items": false
+        },
+        "point_format": {"type": "string"},
+        "units": {
+          "type": "object",
+          "required": ["positions", "phi"],
+          "properties": {
+            "positions": {"const": "Angstrom"},
+            "phi": {"const": "eV/e (= V)"}
+          }
+        },
+        "reference": {"type": ["object", "null"]},
+        "sampler": {"type": ["object", "null"]},
+        "grid_indices_ijk": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "array",
+            "prefixItems": [{"type": "integer"}, {"type": "integer"}, {"type": "integer"}],
+            "items": false
+          }
+        },
+        "components_eV_per_e": {"type": "object"},
+        "source_report": {"type": "object"}
+      },
+      "additionalProperties": true
+    },
+    "units": {"type": "object"},
+    "provenance": {
+      "type": "object",
+      "properties": {"esp_tools": {"type": "object"}}
+    }
+  },
+  "additionalProperties": true
+}
